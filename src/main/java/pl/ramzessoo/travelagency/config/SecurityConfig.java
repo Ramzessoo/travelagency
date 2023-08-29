@@ -1,7 +1,9 @@
 package pl.ramzessoo.travelagency.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.servlet.configuration.WebMvcSecurityConfiguration;
@@ -31,8 +33,15 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().permitAll()
-                );
+                )
+                .httpBasic(Customizer.withDefaults())
+                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
+                .formLogin(Customizer.withDefaults())
+                .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.
+                        frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
+
         return http.build();
     }
 
