@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.ramzessoo.travelagency.converter.CityConverter;
 import pl.ramzessoo.travelagency.dto.CityDto;
+import pl.ramzessoo.travelagency.dto.CountryDto;
 import pl.ramzessoo.travelagency.exception.ResourceNotFoundException;
 import pl.ramzessoo.travelagency.model.City;
 import pl.ramzessoo.travelagency.repository.CityRepository;
@@ -48,5 +49,13 @@ public class CityService {
 
     public CityDto cityDtoById(Long id) throws ResourceNotFoundException {
         return CityConverter.toDto(cityById(id));
+    }
+
+    public Set<CityDto> citiesDtoForCountry(Long countryId) throws ResourceNotFoundException {
+        List<City> cities = cityRepository.findByCountryId(countryId);
+
+        return cities.stream()
+                .map(city -> CityConverter.toDto(city))
+                .collect(Collectors.toSet());
     }
 }
